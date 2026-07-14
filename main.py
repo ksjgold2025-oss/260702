@@ -11,15 +11,24 @@ st.title("👥 우리 동네와 인구 구조가 가장 비슷한 '쌍둥이 지
 # 데이터 로드
 @st.cache_data
 def load_data():
-    # encoding='cp949'를 'utf-8'로 변경했습니다.
+    # 1. 데이터를 읽어옵니다. (쉼표가 포함된 문자열 상태)
     df = pd.read_csv('202606_202606_연령별인구현황_월간.csv', encoding='utf-8')
     
-    # 나머지 코드는 동일합니다.
+    # 2. 첫 번째 컬럼(행정구역명)을 인덱스로 설정
     df = df.set_index(df.columns[0])
-    data = df.iloc[:, 2:] 
-    data_ratio = data.div(data.sum(axis=1), axis=0)
     
-    return data, data_ratio
+    # 3. 필요한 인구 데이터 컬럼만 선택 (총인구수 및 연령별 합계 등 제외, 순수 연령 컬럼만)
+    # 실제 데이터 구조에 따라 이 부분은 조정이 필요할 수 있습니다.
+    # 여기서는 '총인구수'와 '연령구간인구수'가 아닌 나머지 컬럼을 사용합니다.
+    df_data = df.iloc[:, 2:] 
+    
+    # 4. 쉼표(,)를 제거하고 숫자로 변환
+    df_numeric = df_data.replace(',', '', regex=True).astype(float)
+    
+    # 5. 비율 계산 (이제 정상적으로 연산이 가능합니다)
+    data_ratio = df_numeric.div(df_numeric.sum(axis=1), axis=0)
+    
+    return df_numeric, data_ratio
 
 try:
     df, df_ratio = load_data()
