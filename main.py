@@ -11,18 +11,12 @@ st.title("👥 우리 동네와 인구 구조가 가장 비슷한 '쌍둥이 지
 # 데이터 로드
 @st.cache_data
 def load_data():
-    # 행정안전부 CSV 인코딩은 보통 cp949입니다.
-    df = pd.read_csv('202606_202606_연령별인구현황_월간.csv', encoding='cp949')
+    # encoding='cp949'를 'utf-8'로 변경했습니다.
+    df = pd.read_csv('202606_202606_연령별인구현황_월간.csv', encoding='utf-8')
     
-    # 컬럼 정리: 행정구역명을 인덱스로 설정
-    # 보통 0번째 컬럼은 행정구역, 1번째는 총인구수입니다.
+    # 나머지 코드는 동일합니다.
     df = df.set_index(df.columns[0])
-    
-    # 인구 수 컬럼만 추출 (숫자가 아닌 컬럼 제외, 예: '총인구수' 등)
-    # 0세부터 100세 이상까지의 데이터만 추출
     data = df.iloc[:, 2:] 
-    
-    # 데이터를 비율로 변환 (인구 규모와 상관없이 구조만 비교하기 위함)
     data_ratio = data.div(data.sum(axis=1), axis=0)
     
     return data, data_ratio
